@@ -1,0 +1,27 @@
+{
+    "id": "M01Fleet",
+    "name": "Fleet & Documents",
+    "description": "Vehicle fleet management: categories, vehicles, documents, photos, equipment",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": ["M00Core"],
+    "permissions": [
+        "fleet.vehicle.view",
+        "fleet.vehicle.create",
+        "fleet.vehicle.update",
+        "fleet.vehicle.delete",
+        "fleet.vehicle.override_compliance",
+        "fleet.category.view",
+        "fleet.category.create",
+        "fleet.category.update",
+        "fleet.category.delete",
+        "fleet.document.view",
+        "fleet.document.create",
+        "fleet.document.update",
+        "fleet.document.delete"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M01FleetSeeder.php",
+    "providers": "Providers/M01FleetServiceProvider.php"
+}

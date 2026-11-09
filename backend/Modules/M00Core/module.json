@@ -1,0 +1,32 @@
+{
+    "id": "M00Core",
+    "name": "Core",
+    "description": "Core platform: companies, branches, users, roles, permissions, audit log, license, settings",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": [],
+    "permissions": [
+        "core.branch.view",
+        "core.branch.create",
+        "core.branch.update",
+        "core.branch.delete",
+        "core.user.view",
+        "core.user.create",
+        "core.user.update",
+        "core.user.delete",
+        "core.role.view",
+        "core.role.create",
+        "core.role.update",
+        "core.role.delete",
+        "core.role.assign",
+        "core.audit.view",
+        "core.settings.view",
+        "core.settings.update",
+        "core.license.view",
+        "core.license.manage"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M00CoreSeeder.php",
+    "providers": "Providers/M00CoreServiceProvider.php"
+}

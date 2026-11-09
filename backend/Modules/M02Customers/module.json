@@ -1,0 +1,27 @@
+{
+    "id": "M02Customers",
+    "name": "Customers & KYC",
+    "description": "Customer management: individual and company customers, KYC, blacklist",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": ["M00Core"],
+    "permissions": [
+        "customers.customer.view",
+        "customers.customer.create",
+        "customers.customer.update",
+        "customers.customer.delete",
+        "customers.kyc.view",
+        "customers.kyc.verify",
+        "customers.kyc.reject",
+        "customers.blacklist.view",
+        "customers.blacklist.create",
+        "customers.blacklist.remove",
+        "customers.document.view",
+        "customers.document.create",
+        "customers.document.delete"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M02CustomersSeeder.php",
+    "providers": "Providers/M02CustomersServiceProvider.php"
+}

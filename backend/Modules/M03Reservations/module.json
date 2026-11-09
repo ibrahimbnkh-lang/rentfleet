@@ -1,0 +1,23 @@
+{
+    "id": "M03Reservations",
+    "name": "Reservations & Planning",
+    "description": "Booking engine, vehicle availability check, calendar planning and reservation lifecycle",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": ["M00Core", "M01Fleet", "M02Customers"],
+    "permissions": [
+        "reservations.reservation.view",
+        "reservations.reservation.create",
+        "reservations.reservation.update",
+        "reservations.reservation.delete",
+        "reservations.reservation.confirm",
+        "reservations.reservation.cancel",
+        "reservations.reservation.start",
+        "reservations.reservation.complete",
+        "reservations.planning.view"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M03ReservationsSeeder.php"
+}
+

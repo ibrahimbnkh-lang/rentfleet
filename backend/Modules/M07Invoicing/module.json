@@ -1,0 +1,23 @@
+{
+    "id": "M07Invoicing",
+    "name": "Invoicing & Payments",
+    "description": "Algerian fiscal invoicing (TVA 19%, Stamp duty / Droit de timbre, NIF, RC, NIS, AI), payment processing (Cash, Cheque, Transfer, CIB/Edahabia) and receipts",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": ["M00Core", "M01Fleet", "M02Customers", "M05Contracts"],
+    "permissions": [
+        "invoicing.invoice.view",
+        "invoicing.invoice.create",
+        "invoicing.invoice.update",
+        "invoicing.invoice.delete",
+        "invoicing.invoice.issue",
+        "invoicing.invoice.cancel",
+        "invoicing.payment.view",
+        "invoicing.payment.create",
+        "invoicing.payment.refund"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M07InvoicingSeeder.php"
+}
+

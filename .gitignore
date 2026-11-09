@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+vendor/
+*/node_modules/
+*/vendor/
+
+# Environment files
+.env
+.env.*
+.env.backup
+.env.production
+!.env.example
+
+# Build outputs
+dist/
+dist-ssr/
+frontend/dist/
+backend/public/build/
+backend/public/hot/
+backend/public/storage
+
+# SQLite databases
+*.sqlite
+*.sqlite-journal
+*.sqlite3
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+
+# Storage & Cache
+backend/storage/*.key
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/storage/pail/*
+!.gitkeep
+
+# IDEs & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs & Tests
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.phpunit.result.cache
+.phpunit.cache/

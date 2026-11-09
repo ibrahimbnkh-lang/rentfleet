@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentFleet Algérie — Complete User Guide</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --navy: #0f172a;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg);
+    }
+
+    /* Layout */
+    .layout {
+      max-width: 1350px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    /* Sidebar Table of Contents */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 5rem;
+      height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+
+    .toc-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+
+    .toc-link:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Main Content Area */
+    .content {
+      flex: 1;
+      max-width: 950px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Hero / Header */
+    .hero {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-badge-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .badge-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .badge-green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+    .badge-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Headings */
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-top: 1.5rem;
+      margin-bottom: 0.6rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    ul, ol {
+      margin-bottom: 1.25rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Callouts */
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: #f8fafc;
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .callout-important {
+      border-left-color: var(--danger);
+      background: #fef2f2;
+    }
+    .callout-important .callout-title {
+      color: var(--danger);
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: var(--navy);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #fafafa;
+    }
+
+    /* Code Blocks */
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f1f5f9;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      color: #0f172a;
+    }
+
+    pre {
+      background: var(--navy);
+      color: #f8fafc;
+      padding: 1.15rem 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 1.25rem 0;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Lifecycle Workflow Visual */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .workflow-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--primary);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .workflow-step {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+    }
+
+    .workflow-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 0.25rem 0;
+    }
+
+    .workflow-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media print {
+      .topbar, .sidebar, .btn {
+        display: none !important;
+      }
+      .layout {
+        display: block;
+        padding: 0;
+      }
+      .content {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      .sidebar {
+        display: none;
+      }
+      .content {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <a href="#" class="brand">
+      RentFleet <span>Algérie</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="window.print()">
+        🖨️ Print / Save as PDF
+      </button>
+      <a href="http://localhost:5173" target="_blank" class="btn btn-primary">
+        🚀 Launch App
+      </a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="toc-title">Table of Contents</div>
+      <ul class="toc-list">
+        <li><a href="#overview" class="toc-link">1. Overview & Ports</a></li>
+        <li><a href="#credentials" class="toc-link">2. Default Credentials</a></li>
+        <li><a href="#m00-core" class="toc-link">3. M00 · Administration</a></li>
+        <li><a href="#m01-fleet" class="toc-link">4. M01 · Fleet & Documents</a></li>
+        <li><a href="#m02-customers" class="toc-link">5. M02 · Customers & KYC</a></li>
+        <li><a href="#m03-booking" class="toc-link">6. M03 · Reservations & Planning</a></li>
+        <li><a href="#m05-contracts" class="toc-link">7. M05 · Contracts & E-Sign</a></li>
+        <li><a href="#m07-invoicing" class="toc-link">8. M07 · Invoicing & Payments</a></li>
+        <li><a href="#public-portal" class="toc-link">9. Public Agency Portal</a></li>
+        <li><a href="#workflow" class="toc-link">10. Rental Lifecycle</a></li>
+        <li><a href="#maintenance" class="toc-link">11. CLI & Maintenance</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Documentation Content -->
+    <main class="content">
+
+      <!-- Hero Header -->
+      <section class="hero">
+        <div class="hero-badge-group">
+          <span class="badge badge-blue">Executive Decree N° 04-415</span>
+          <span class="badge badge-green">Algerian DGI Tax Compliance</span>
+          <span class="badge badge-amber">TVA 19% & Stamp Duty</span>
+          <span class="badge badge-blue">Digital E-Signature</span>
+        </div>
+        <h1>Complete User & Administration Guide</h1>
+        <p class="hero-subtitle">
+          Enterprise Car Rental ERP, Fleet Tracking & Algerian Tax/Regulatory Compliance Manual
+        </p>
+      </section>
+
+      <!-- Section 1 -->
+      <section id="overview">
+        <h2>1. System Architecture & Overview</h2>
+        <p>
+          <strong>RentFleet Algérie</strong> is designed as a high-performance <strong>Modular Monolith</strong> tailored specifically for vehicle rental operators across all 58 Algerian Wilayas.
+        </p>
+        <ul>
+          <li><strong>Backend</strong>: Laravel 11 (PHP 8.2+) organized in autonomous modules located in <code>backend/Modules/</code>, protected by Sanctum token auth.</li>
+          <li><strong>Frontend</strong>: Vue 3 (Composition API with TypeScript 5), Vite runtime, and Vue Router 4.</li>
+          <li><strong>Algerian Specialization</strong>: Built-in validation rules for National Identification Numbers (NIN), driver license seniority, 58 Wilaya codes, matricule plates (<code>12345-121-16</code>), 19% TVA, and cash stamp duty (<em>Droit de timbre</em>).</li>
+        </ul>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Access Link</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Web Application</strong></td>
+                <td><a href="http://localhost:5173" target="_blank"><code>http://localhost:5173</code></a></td>
+                <td>Admin dashboard, fleet tracking, contracts & invoicing</td>
+              </tr>
+              <tr>
+                <td><strong>REST API</strong></td>
+                <td><code>http://127.0.0.1:8000/api/v1</code></td>
+                <td>Secure JSON REST API endpoints</td>
+              </tr>
+              <tr>
+                <td><strong>Public Agency Portal</strong></td>
+                <td><a href="http://localhost:5173/public/branches/ALG-01" target="_blank"><code>/public/branches/ALG-01</code></a></td>
+                <td>Customer-facing vehicle showcase and booking requests</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section id="credentials">
+        <h2>2. Default Credentials & Access</h2>
+        <p>Pre-seeded accounts available for testing and daily operations:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Scope & Assigned Permissions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Super Admin</strong></td>
+                <td><code>admin@rentfleet.dz</code></td>
+                <td><code>password</code></td>
+                <td>Full access across all branches, audit logs, licenses, and settings</td>
+              </tr>
+              <tr>
+                <td><strong>Agency Manager (Alger)</strong></td>
+                <td><code>manager.alger@rentfleet.dz</code></td>
+                <td><code>password</code></td>
+                <td>Branch Manager (Agence Alger Centre): fleet, rates, contracts, cashbook</td>
+              </tr>
+              <tr>
+                <td><strong>Agency Manager (Oran)</strong></td>
+                <td><code>manager.oran@rentfleet.dz</code></td>
+                <td><code>password</code></td>
+                <td>Branch Manager (Agence Oran Es Senia): fleet, rates, contracts, cashbook</td>
+              </tr>
+              <tr>
+                <td><strong>Front-Desk Agent</strong></td>
+                <td><code>agent.alger@rentfleet.dz</code></td>
+                <td><code>password</code></td>
+                <td>Desk clerk: customer intake, bookings, check-in/out, receipts</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Default Password</div>
+          All demo user accounts use the default password <code>password</code>. You can change credentials anytime in <strong>Paramètres</strong>.
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section id="m00-core">
+        <h2>3. Module M00 · Core Administration & Security</h2>
+        <p>Located in the sidebar under <strong>Administration</strong>:</p>
+        <ul>
+          <li><strong>Multi-Branch Management (<code>/branches</code>)</strong>: Manage physical agency desks (Alger Centre, Oran Aéroport Es Sénia, Constantine Malek Haddad). Branch agents are automatically restricted to their agency's records.</li>
+          <li><strong>Users & RBAC (<code>/users</code> & <code>/roles</code>)</strong>: Granular permissions per module (e.g. <code>fleet.create</code>, <code>contracts.sign</code>, <code>invoicing.issue</code>).</li>
+          <li><strong>Audit Trail (<code>/audit-logs</code>)</strong>: Complete activity logs recording timestamps, users, IP addresses, events, and before/after values.</li>
+          <li><strong>Software Licensing (<code>/license</code>)</strong>: Offline cryptographic licensing verifying vehicle quotas and module activations.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 -->
+      <section id="m01-fleet">
+        <h2>4. Module M01 · Fleet & Document Management</h2>
+        <p>Located in the sidebar under <strong>Parc Automobile</strong>:</p>
+
+        <h3>4.1 Vehicle Catalog (<code>/fleet/vehicles</code>)</h3>
+        <p>Complete fleet records with photos, registration plates (matricule), VIN, fuel types, odometer mileage, and daily rates in <strong>DZD</strong>.</p>
+        <ul>
+          <li>🟢 <strong>Available (Disponible)</strong>: Ready for rental assignment.</li>
+          <li>🔵 <strong>Rented (En location)</strong>: On the road under an active contract.</li>
+          <li>🟡 <strong>Maintenance (En révision)</strong>: Under mechanical servicing or inspection.</li>
+          <li>🔴 <strong>Immobilized (Immobilisé)</strong>: Impounded or accident repair.</li>
+        </ul>
+
+        <h3>4.2 Document Expiration Monitoring (<code>/fleet/expiring-documents</code>)</h3>
+        <p>Monitors the 4 legal documents required by Algerian law:</p>
+        <ol>
+          <li><strong>Assurance Commerciale</strong> (Commercial fleet insurance)</li>
+          <li><strong>Contrôle Technique</strong> (Technical safety inspection certificate)</li>
+          <li><strong>Carte Grise / Carte Jaune</strong> (Vehicle registration document)</li>
+          <li><strong>Vignette Automobile</strong> (Annual road tax stamp)</li>
+        </ol>
+
+        <div class="callout callout-important">
+          <div class="callout-title">Safety & Compliance Rule</div>
+          Documents expiring within <strong>30 days</strong> are highlighted in amber; expired documents in red. Vehicles with expired documentation are barred from contract assignment.
+        </div>
+      </section>
+
+      <!-- Section 5 -->
+      <section id="m02-customers">
+        <h2>5. Module M02 · Customers, KYC & Scoring</h2>
+        <p>Located in the sidebar under <strong>Clients & KYC</strong> (<code>/customers</code>):</p>
+        <ul>
+          <li><strong>Individual Accounts (Particuliers)</strong>: First name, last name, date of birth, Algerian National ID (NIN), phone, and residential Wilaya.</li>
+          <li><strong>Corporate Accounts (Entreprises)</strong>: Trade Register (<strong>RC</strong>), Tax ID (<strong>NIF</strong>), Statistical ID (<strong>NIS</strong>), Article d'Imposition (<strong>AI</strong>), and designated authorized drivers.</li>
+          <li><strong>2-Year Driver License Seniority Rule</strong>: Automated validation enforcing the mandatory 24-month license requirement. Probationary drivers trigger warning flags.</li>
+          <li><strong>Scoring & Instant Blacklist</strong>: Customer trust rating (0–100) based on rental punctuality. A single click locks blacklisted drivers out across all branches.</li>
+        </ul>
+      </section>
+
+      <!-- Section 6 -->
+      <section id="m03-booking">
+        <h2>6. Module M03 · Booking Engine & Planning Timeline</h2>
+        <p>Located in the sidebar under <strong>Réservations</strong> (<code>/reservations</code>) & <strong>Planning</strong> (<code>/planning</code>):</p>
+        <ul>
+          <li><strong>Conflict Detection Engine</strong>: Instant schedule collision checking against existing bookings, active rentals, and scheduled maintenance slots.</li>
+          <li><strong>Automated Price Quotations</strong>: Computes 24-hour cycles, daily base rates, optional extras (GPS, child safety seat), and mandatory security deposits (<em>Caution</em>).</li>
+          <li><strong>Interactive Timeline (<code>/planning</code>)</strong>: Visual Gantt calendar displaying fleet utilization by branch with color-coded booking bars.</li>
+        </ul>
+      </section>
+
+      <!-- Section 7 -->
+      <section id="m05-contracts">
+        <h2>7. Module M05 · Contracts, Inspection & E-Signature</h2>
+        <p>Located in the sidebar under <strong>Contrats</strong> (<code>/contracts</code>):</p>
+        <ul>
+          <li><strong>Decree 04-415 Legal Compliance</strong>: Contracts include mandatory clauses, driver obligations, and territorial limitations (continental Algeria only).</li>
+          <li><strong>Digital Touch / Mouse E-Signature</strong>: Clients sign directly on tablet or PC screens; stores cryptographic signature vectors with IP address and timestamp.</li>
+          <li><strong>Vehicle Restitution Inspection</strong>: Return odometer km, return fuel gauge, damage notes, extra mileage penalties, and automatic vehicle status reset.</li>
+        </ul>
+      </section>
+
+      <!-- Section 8 -->
+      <section id="m07-invoicing">
+        <h2>8. Module M07 · Invoicing, Algerian Taxes & Cash Register</h2>
+        <p>Located in the sidebar under <strong>Facturation & Caisse</strong> (<code>/invoices</code>, <code>/payments</code>):</p>
+
+        <h3>8.1 Algerian Tax Compliance Engine</h3>
+        <ul>
+          <li><strong>TVA (VAT) 19.00%</strong>: Computed on net pre-tax amounts (HT).</li>
+          <li><strong>Droit de Timbre Fiscal (Cash Stamp Duty)</strong>:
+            <ul>
+              <li>Applicable <strong>only</strong> for cash payments (<code>cash</code>).</li>
+              <li>Rate: <strong>1.00%</strong> of TTC base amount, bounded between <strong>20 DZD</strong> and <strong>2,500 DZD</strong>.</li>
+              <li>For non-cash payments (Cheque, Bank transfer, CIB/Edahabia): Stamp duty is legally <strong>0.00 DZD</strong>.</li>
+            </ul>
+          </li>
+          <li><strong>Amount in Words in French</strong>: Generated automatically on invoices (e.g. <em>« Arrêtée la présente facture à la somme de... »</em>).</li>
+        </ul>
+
+        <h3>8.2 Cash Register & Official Receipts (<code>/payments</code>)</h3>
+        <p>
+          Real-time tracking of cash in drawer, cheques, wire transfers, and CIB cards. Includes printable official A5 cash receipt vouchers with counterfoil stubs.
+        </p>
+      </section>
+
+      <!-- Section 9 -->
+      <section id="public-portal">
+        <h2>9. Public Agency Showcase Portal</h2>
+        <p>
+          Public agency storefront accessible without login at:
+          <br>
+          <a href="http://localhost:5173/public/branches/ALG-01" target="_blank"><strong><code>http://localhost:5173/public/branches/ALG-01</code></strong></a>
+        </p>
+        <ul>
+          <li>Displays agency contact details, opening hours, phone, and wilaya address.</li>
+          <li>Live catalog of vehicles currently stationed and available at that branch.</li>
+          <li>Public reservation inquiry form allowing prospective clients to book online.</li>
+        </ul>
+      </section>
+
+      <!-- Section 10 -->
+      <section id="workflow">
+        <h2>10. Complete Rental Operational Lifecycle</h2>
+        <p>Standard workflow from customer arrival to final settlement:</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-step">Step 1</div>
+            <div class="workflow-name">Customer Intake</div>
+            <div class="workflow-desc">Record NIN & verify 2-year license validity (M02)</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-step">Step 2</div>
+            <div class="workflow-name">Reservation</div>
+            <div class="workflow-desc">Select dates, check availability & quote (M03)</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-step">Step 3</div>
+            <div class="workflow-name">Contract & Sign</div>
+            <div class="workflow-desc">Start km, deposit & capture digital signature (M05)</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-step">Step 4</div>
+            <div class="workflow-name">Restitution</div>
+            <div class="workflow-desc">Check return km, fuel level & close contract (M05)</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-step">Step 5</div>
+            <div class="workflow-name">Invoice & Pay</div>
+            <div class="workflow-desc">Issue DGI invoice (19% TVA) & print receipt (M07)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 11 -->
+      <section id="maintenance">
+        <h2>11. System Maintenance & CLI Commands</h2>
+        <pre><code># Run full automated test suite (59 tests across all modules)
+Set-Location "c:\Users\ibra\Desktop\car rent\backend"
+C:\xampp\php\php.exe artisan test
+
+# Refresh database schema and apply demo seeders
+C:\xampp\php\php.exe artisan migrate:fresh --seed
+
+# Recompile frontend assets for production
+Set-Location "c:\Users\ibra\Desktop\car rent\frontend"
+npm run build</code></pre>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div>RentFleet Algérie — Enterprise Vehicle Rental Platform</div>
+        <div>Certified Official Documentation — 2026</div>
+      </footer>
+
+    </main>
+  </div>
+
+</body>
+</html>
+

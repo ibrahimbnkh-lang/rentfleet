@@ -1,0 +1,22 @@
+{
+    "id": "M05Contracts",
+    "name": "Contracts & E-Signature",
+    "description": "Rental contracts management, legal Algerian compliance, check-in / check-out inspections, digital signatures and printable contract generator",
+    "version": "1.0.0",
+    "author": "RentFleet",
+    "prerequisites": ["M00Core", "M01Fleet", "M02Customers", "M03Reservations"],
+    "permissions": [
+        "contracts.contract.view",
+        "contracts.contract.create",
+        "contracts.contract.update",
+        "contracts.contract.delete",
+        "contracts.contract.sign",
+        "contracts.contract.checkin",
+        "contracts.contract.checkout",
+        "contracts.contract.print"
+    ],
+    "routes": "Routes/api.php",
+    "migrations": "Database/Migrations",
+    "seeders": "Database/Seeders/M05ContractsSeeder.php"
+}
+
