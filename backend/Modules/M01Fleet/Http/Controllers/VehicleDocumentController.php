@@ -50,6 +50,32 @@ class VehicleDocumentController extends ApiController
         return $this->created($document);
     }
 
+    public function update(Request $request, Vehicle $vehicle, VehicleDocument $document): JsonResponse
+    {
+        $validated = $request->validate([
+            'type' => ['sometimes', 'required', 'string', 'in:assurance,controle_technique,carte_grise,vignette,autorisation'],
+            'reference_number' => ['sometimes', 'required', 'string', 'max:100'],
+            'issuer' => ['nullable', 'string', 'max:100'],
+            'issued_at' => ['nullable', 'date'],
+            'expires_at' => ['nullable', 'date'],
+            'file_path' => ['nullable', 'string'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $oldValues = $document->toArray();
+        $document->update($validated);
+
+        $this->auditService->log(
+            module: 'M01Fleet',
+            action: 'vehicle_document.updated',
+            auditable: $document,
+            oldValues: $oldValues,
+            newValues: $document->fresh()->toArray()
+        );
+
+        return $this->ok($document->fresh());
+    }
+
     public function destroy(Vehicle $vehicle, VehicleDocument $document): JsonResponse
     {
         $oldValues = $document->toArray();

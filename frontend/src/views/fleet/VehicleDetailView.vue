@@ -334,7 +334,7 @@
           <h3 class="section-title">Documents du véhicule</h3>
           <p class="section-subtitle">Assurance automobile, contrôle technique et certificat d'immatriculation</p>
         </div>
-        <button class="btn btn-primary btn-sm" @click="showDocModal = true">
+        <button class="btn btn-primary btn-sm" @click="openAddDocModal">
           + Ajouter un document
         </button>
       </div>
@@ -367,6 +367,9 @@
                 </span>
               </td>
               <td class="text-right">
+                <button class="btn btn-ghost btn-sm text-primary" @click="openEditDocModal(doc)">
+                  Modifier
+                </button>
                 <button class="btn btn-ghost btn-sm text-error" @click="deleteDoc(doc.id)">
                   Supprimer
                 </button>
@@ -408,11 +411,11 @@
     <div v-if="showDocModal" class="modal-backdrop" @click.self="showDocModal = false">
       <div class="modal-content card max-w-lg">
         <div class="modal-header">
-          <h3>Ajouter un document réglementaire</h3>
+          <h3>{{ editingDocId ? 'Modifier / Renouveler le document' : 'Ajouter un document réglementaire' }}</h3>
           <button class="modal-close-btn" @click="showDocModal = false">✕</button>
         </div>
 
-        <form @submit.prevent="addDocument">
+        <form @submit.prevent="saveDocument">
           <div class="form-grid">
             <div class="form-group col-span-2">
               <label class="label">Type de document *</label>
@@ -448,7 +451,7 @@
 
           <div class="modal-footer mt-4">
             <button type="button" class="btn btn-secondary" @click="showDocModal = false">Annuler</button>
-            <button type="submit" class="btn btn-primary">Enregistrer le document</button>
+            <button type="submit" class="btn btn-primary">{{ editingDocId ? 'Enregistrer les modifications' : 'Enregistrer le document' }}</button>
           </div>
         </form>
       </div>
@@ -640,10 +643,41 @@ async function updateStatus() {
   }
 }
 
-async function addDocument() {
+const editingDocId = ref<number | null>(null)
+
+function openAddDocModal() {
+  editingDocId.value = null
+  docForm.value = {
+    type: 'assurance',
+    reference_number: '',
+    issuer: 'SAA Assurances',
+    issued_at: '',
+    expires_at: '',
+  }
+  showDocModal.value = true
+}
+
+function openEditDocModal(doc: any) {
+  editingDocId.value = doc.id
+  docForm.value = {
+    type: doc.type || 'assurance',
+    reference_number: doc.reference_number || '',
+    issuer: doc.issuer || '',
+    issued_at: doc.issued_at ? String(doc.issued_at).split('T')[0] : '',
+    expires_at: doc.expires_at ? String(doc.expires_at).split('T')[0] : '',
+  }
+  showDocModal.value = true
+}
+
+async function saveDocument() {
   try {
-    await api.post(`/fleet/vehicles/${vehicleId}/documents`, docForm.value)
+    if (editingDocId.value) {
+      await api.put(`/fleet/vehicles/${vehicleId}/documents/${editingDocId.value}`, docForm.value)
+    } else {
+      await api.post(`/fleet/vehicles/${vehicleId}/documents`, docForm.value)
+    }
     showDocModal.value = false
+    editingDocId.value = null
     docForm.value = {
       type: 'assurance',
       reference_number: '',
@@ -653,7 +687,7 @@ async function addDocument() {
     }
     fetchVehicle()
   } catch (err: any) {
-    alert(err.response?.data?.error?.message ?? 'Erreur lors de l\'enregistrement')
+    alert(err.response?.data?.error?.message ?? err.response?.data?.message ?? 'Erreur lors de l\'enregistrement')
   }
 }
 

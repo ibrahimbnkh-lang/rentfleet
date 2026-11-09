@@ -32,6 +32,7 @@ Route::prefix('fleet')->middleware(['auth:sanctum', 'module:M01Fleet'])->group(f
 
         Route::get('/documents', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'index'])->middleware('permission:fleet.document.view');
         Route::post('/documents', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'store'])->middleware('permission:fleet.document.create');
+        Route::put('/documents/{document}', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'update'])->middleware('permission:fleet.document.update');
         Route::delete('/documents/{document}', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'destroy'])->middleware('permission:fleet.document.delete');
 
         Route::get('/equipment', [\Modules\M01Fleet\Http\Controllers\VehicleEquipmentController::class, 'index'])->middleware('permission:fleet.vehicle.view');
@@ -42,6 +43,7 @@ Route::prefix('fleet')->middleware(['auth:sanctum', 'module:M01Fleet'])->group(f
 
     // ─── Expiring Documents ──────────────────────────────────────────────
     Route::get('expiring-documents', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'expiring'])->middleware('permission:fleet.document.view');
+    Route::get('documents/expiring', [\Modules\M01Fleet\Http\Controllers\VehicleDocumentController::class, 'expiring'])->middleware('permission:fleet.document.view');
 });
 
 // ─── Public Agency Fleet Showcase (no auth needed) ────────────────────────

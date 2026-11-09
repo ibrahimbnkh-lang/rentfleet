@@ -151,17 +151,115 @@
                 <span class="font-semibold">{{ formatDate(doc.expires_at) }}</span>
               </td>
               <td class="text-right">
-                <RouterLink
-                  v-if="doc.vehicle"
-                  :to="`/fleet/vehicles/${doc.vehicle.id}`"
-                  class="btn btn-ghost btn-sm text-primary"
-                >
-                  Gérer le véhicule →
-                </RouterLink>
+                <div class="actions-cell">
+                  <button
+                    type="button"
+                    class="btn btn-renew"
+                    @click="openRenewModal(doc)"
+                    title="Mettre à jour ou renouveler le document"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    <span>Renouveler</span>
+                  </button>
+                  <RouterLink
+                    v-if="doc.vehicle"
+                    :to="`/fleet/vehicles/${doc.vehicle.id}`"
+                    class="btn btn-secondary btn-sm"
+                  >
+                    <span>Véhicule</span>
+                    <span class="arrow-icon">→</span>
+                  </RouterLink>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Renewal / Update Document Modal -->
+    <div v-if="showRenewModal && selectedDoc" class="modal-backdrop" @click.self="showRenewModal = false">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">{{ getDocIcon(selectedDoc.type) }}</span>
+            <div>
+              <h3 class="modal-title">Renouveler le document</h3>
+              <p class="modal-subtitle">
+                {{ formatDocType(selectedDoc.type) }} —
+                <span class="font-bold">{{ selectedDoc.vehicle?.brand }} {{ selectedDoc.vehicle?.model }}</span>
+                ({{ formatPlate(selectedDoc.vehicle?.registration_plate) }})
+              </p>
+            </div>
+          </div>
+          <button class="modal-close" @click="showRenewModal = false">✕</button>
+        </div>
+
+        <form @submit.prevent="submitRenewal" class="modal-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="label">Numéro de police / Référence *</label>
+              <input
+                v-model="renewForm.reference_number"
+                type="text"
+                class="input"
+                required
+                placeholder="Ex: POL-2026-99882"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label">Organisme / Émetteur</label>
+              <input
+                v-model="renewForm.issuer"
+                type="text"
+                class="input"
+                placeholder="Ex: SAA Assurances, CAAT, Centre Technique..."
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label">Date d'émission</label>
+              <input
+                v-model="renewForm.issued_at"
+                type="date"
+                class="input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label">Nouvelle date d'expiration *</label>
+              <input
+                v-model="renewForm.expires_at"
+                type="date"
+                class="input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="label">Notes / Observations</label>
+            <textarea
+              v-model="renewForm.notes"
+              rows="2"
+              class="input textarea"
+              placeholder="Informations complémentaires sur le renouvellement..."
+            ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="showRenewModal = false">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" :disabled="renewSubmitting">
+              <span v-if="renewSubmitting">Enregistrement...</span>
+              <span v-else>💾 Valider le renouvellement</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -203,6 +301,47 @@ const searchQuery = ref('')
 const filterType = ref('')
 const filterUrgency = ref('')
 
+// Renewal modal state
+const showRenewModal = ref(false)
+const selectedDoc = ref<VehicleDocumentItem | null>(null)
+const renewSubmitting = ref(false)
+const renewForm = ref({
+  reference_number: '',
+  issuer: '',
+  issued_at: '',
+  expires_at: '',
+  notes: '',
+})
+
+function openRenewModal(doc: VehicleDocumentItem) {
+  selectedDoc.value = doc
+  renewForm.value = {
+    reference_number: doc.reference_number || '',
+    issuer: doc.issuer || '',
+    issued_at: doc.issued_at ? String(doc.issued_at).split('T')[0] : '',
+    expires_at: doc.expires_at ? String(doc.expires_at).split('T')[0] : '',
+    notes: doc.notes || '',
+  }
+  showRenewModal.value = true
+}
+
+async function submitRenewal() {
+  if (!selectedDoc.value) return
+  renewSubmitting.value = true
+  try {
+    await api.put(
+      `/fleet/vehicles/${selectedDoc.value.vehicle_id}/documents/${selectedDoc.value.id}`,
+      renewForm.value
+    )
+    showRenewModal.value = false
+    await fetchExpiringDocs()
+  } catch (err: any) {
+    alert(err.response?.data?.error?.message || err.response?.data?.message || 'Erreur lors du renouvellement')
+  } finally {
+    renewSubmitting.value = false
+  }
+}
+
 async function fetchExpiringDocs() {
   loading.value = true
   try {
@@ -220,27 +359,35 @@ async function fetchExpiringDocs() {
 const totalDocsCount = computed(() => documents.value.length)
 
 const expiredCount = computed(() => {
-  const now = new Date().getTime()
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
   return documents.value.filter(d => {
     if (!d.expires_at) return false
-    return new Date(d.expires_at).getTime() < now
+    const exp = new Date(d.expires_at)
+    exp.setHours(0, 0, 0, 0)
+    return exp.getTime() < now.getTime()
   }).length
 })
 
 const urgentCount = computed(() => {
-  const now = new Date().getTime()
-  const sevenDays = now + 7 * 86400000
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const sevenDays = new Date(now)
+  sevenDays.setDate(sevenDays.getDate() + 7)
   return documents.value.filter(d => {
     if (!d.expires_at) return false
-    const exp = new Date(d.expires_at).getTime()
-    return exp >= now && exp <= sevenDays
+    const exp = new Date(d.expires_at)
+    exp.setHours(0, 0, 0, 0)
+    return exp.getTime() >= now.getTime() && exp.getTime() <= sevenDays.getTime()
   }).length
 })
 
 const filteredDocs = computed(() => {
   const q = searchQuery.value.toLowerCase().trim()
-  const now = new Date().getTime()
-  const sevenDays = now + 7 * 86400000
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const sevenDays = new Date(now)
+  sevenDays.setDate(sevenDays.getDate() + 7)
 
   return documents.value.filter(doc => {
     // Type filter
@@ -248,10 +395,13 @@ const filteredDocs = computed(() => {
 
     // Urgency filter
     if (filterUrgency.value) {
-      const exp = doc.expires_at ? new Date(doc.expires_at).getTime() : 0
-      if (filterUrgency.value === 'expired' && exp >= now) return false
-      if (filterUrgency.value === 'critical' && (exp < now || exp > sevenDays)) return false
-      if (filterUrgency.value === 'upcoming' && exp <= sevenDays) return false
+      if (!doc.expires_at) return false
+      const exp = new Date(doc.expires_at)
+      exp.setHours(0, 0, 0, 0)
+
+      if (filterUrgency.value === 'expired' && exp.getTime() >= now.getTime()) return false
+      if (filterUrgency.value === 'critical' && (exp.getTime() < now.getTime() || exp.getTime() > sevenDays.getTime())) return false
+      if (filterUrgency.value === 'upcoming' && exp.getTime() <= sevenDays.getTime()) return false
     }
 
     // Search query
@@ -273,15 +423,26 @@ function getUrgencyBadge(doc: VehicleDocumentItem) {
     return { badgeClass: 'badge-neutral', label: 'Indéterminé', subtext: '', textClass: '' }
   }
 
-  const now = new Date().setHours(0, 0, 0, 0)
-  const exp = new Date(doc.expires_at).setHours(0, 0, 0, 0)
-  const diffDays = Math.ceil((exp - now) / (1000 * 3600 * 24))
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const exp = new Date(doc.expires_at)
+  exp.setHours(0, 0, 0, 0)
+  const diffDays = Math.round((exp.getTime() - now.getTime()) / (1000 * 3600 * 24))
 
   if (diffDays < 0) {
     return {
       badgeClass: 'badge-danger',
       label: 'EXPIRÉ',
       subtext: `Expiré depuis ${Math.abs(diffDays)} j`,
+      textClass: 'text-error font-bold',
+    }
+  }
+
+  if (diffDays === 0) {
+    return {
+      badgeClass: 'badge-danger',
+      label: 'EXPIRE AUJOURD\'HUI',
+      subtext: 'Échéance aujourd\'hui',
       textClass: 'text-error font-bold',
     }
   }
@@ -529,5 +690,173 @@ onMounted(() => {
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 0.5rem;
+}
+
+/* Actions Cell */
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn-renew {
+  background: linear-gradient(135deg, #5A3CDF 0%, #4322C4 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 2px 6px rgba(90, 60, 223, 0.35);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn-renew:hover {
+  background: linear-gradient(135deg, #4d31cb 0%, #3719af 100%);
+  box-shadow: 0 4px 12px rgba(90, 60, 223, 0.5);
+  transform: translateY(-1px);
+  color: #ffffff !important;
+}
+
+.btn-renew:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(90, 60, 223, 0.3);
+}
+
+.arrow-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.actions-cell a:hover .arrow-icon {
+  transform: translateX(2px);
+}
+
+/* Modal Styling */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modal-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal-icon {
+  font-size: 1.75rem;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.15rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-3);
+}
+
+.modal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
 }
 </style>

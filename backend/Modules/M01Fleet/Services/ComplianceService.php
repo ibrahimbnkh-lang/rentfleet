@@ -92,6 +92,7 @@ class ComplianceService
 
         $query = VehicleDocument::query()
             ->with(['vehicle.branch'])
+            ->whereHas('vehicle')
             ->whereNotNull('expires_at')
             ->where('expires_at', '<=', $limitDate);
 

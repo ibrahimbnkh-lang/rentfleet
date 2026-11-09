@@ -149,7 +149,10 @@
             </svg>
           </span>
           <Transition name="fade">
-            <span v-if="!sidebarCollapsed" class="nav-label">{{ t('nav.expiringDocs') }}</span>
+            <div v-if="!sidebarCollapsed" class="nav-label-wrap">
+              <span class="nav-label">{{ t('nav.expiringDocs') }}</span>
+              <span v-if="expiringDocsCount > 0" class="nav-badge">{{ expiringDocsCount }}</span>
+            </div>
           </Transition>
         </RouterLink>
 
@@ -315,8 +318,20 @@
             </button>
           </div>
 
-          <!-- Notifications Bell (placeholder) -->
-          <button class="icon-btn" title="Notifications">
+          <!-- Notifications Bell -->
+          <RouterLink
+            v-if="can('fleet.document.view')"
+            to="/fleet/expiring-documents"
+            class="icon-btn notif-btn"
+            :title="expiringDocsCount > 0 ? `${expiringDocsCount} document(s) expirant(s) ou non conformes` : 'Notifications'"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2a6 6 0 016 6c0 2.5.8 4 2 5H2c1.2-1 2-2.5 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 16a2 2 0 004 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span v-if="expiringDocsCount > 0" class="notif-badge">{{ expiringDocsCount > 99 ? '99+' : expiringDocsCount }}</span>
+          </RouterLink>
+          <button v-else class="icon-btn" title="Notifications">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M10 2a6 6 0 016 6c0 2.5.8 4 2 5H2c1.2-1 2-2.5 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
               <path d="M8 16a2 2 0 004 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -338,11 +353,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import AppLogo from '@/components/AppLogo.vue'
+import api from '@/api'
 
 const { t, locale } = useI18n()
 const auth = useAuthStore()
@@ -350,6 +366,30 @@ const router = useRouter()
 const route = useRoute()
 
 const sidebarCollapsed = ref(false)
+const expiringDocsCount = ref(0)
+
+async function fetchExpiringDocsCount() {
+  if (!can('fleet.document.view')) return
+  try {
+    const { data } = await api.get('/fleet/documents/expiring', { params: { days: 30 } })
+    expiringDocsCount.value = Array.isArray(data?.data) ? data.data.length : 0
+  } catch {
+    // quiet ignore
+  }
+}
+
+onMounted(() => {
+  fetchExpiringDocsCount()
+})
+
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/fleet/expiring-documents' || newPath === '/') {
+      fetchExpiringDocsCount()
+    }
+  }
+)
 
 const userInitials = computed(() => {
   const name = auth.user?.name ?? ''
@@ -532,6 +572,47 @@ async function handleLogout() {
 .nav-label {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.nav-label-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.nav-badge {
+  background: #EF4444;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+
+.notif-btn {
+  position: relative;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #EF4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-surface);
+  line-height: 1;
 }
 
 /* ─── Sidebar Bottom ─────────────────────────────────────────────────────── */

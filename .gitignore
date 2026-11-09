@@ -18,6 +18,8 @@ frontend/dist/
 backend/public/build/
 backend/public/hot/
 backend/public/storage
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
 
 # SQLite databases
 *.sqlite
